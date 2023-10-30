@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+    .home-container {
+        display: grid;
+        grid-template-columns: 1fr 3fr 1fr;
+    }
+</style>
+<h1>Home page [[ cse471-Anime ]] </h1>
+<h1>Home page- Welcome {{ user.name }} </h1>
+
+{% endblock content %}
