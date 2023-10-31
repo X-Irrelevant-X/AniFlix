@@ -30,6 +30,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,7 +41,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'base',
+
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID =2
 
 AUTH_USER_MODEL = 'base.User'
 
@@ -52,6 +63,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'anime.urls'
@@ -69,10 +83,39 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
         },
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+]
+
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        "SCOPE": [
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    }
+}
 
 WSGI_APPLICATION = 'anime.wsgi.application'
 
