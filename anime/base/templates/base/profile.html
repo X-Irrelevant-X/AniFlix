@@ -1,0 +1,33 @@
+{% extends 'main.html' %} 
+
+{% block content %}
+
+{% load static %}
+<div class="profile">
+  <div class="profile__avatar">
+    <div >
+      <img src="{{ user.avatar.url }}" />
+
+    </div>
+  </div>
+  <div class="profile__info">
+    <h3>UserID: {{user.username}}</h3>
+    <p>Name: {{user.name}}</p>
+{% if request.user.is_authenticated %}
+    <a href="{% url 'update-user' %}" 
+      >Edit Profile</a
+    >
+{% else %}
+    
+    <p> You can't Edit This profile</p>
+    
+{% endif %}
+
+  </div>
+  <div >
+    <h3>About</h3>
+    <p>{{user.bio}}</p>
+  </div>
+</div>
+
+{% endblock content %}
