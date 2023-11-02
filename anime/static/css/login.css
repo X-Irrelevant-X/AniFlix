@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css?family=Numans');
+
+html,body{
+    background-image: url('https://3.bp.blogspot.com/-YGeLk4geUFg/W8TY2qbWgMI/AAAAAAAAEfc/Ua-3NhNGRSk3pcsxenyprpipPoQx9lFfACLcBGAs/s1600/1537820530470.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    font-family: 'Numans', sans-serif;
+}
+
+.home-button {
+    position: absolute;
+    top: 20px;
+    left: 615px;
+    background-color: hsl(45, 100%, 54%);
+    color: black;
+}
+
+h3 {
+    text-align: center;
+}
+
+.container{
+    height: 100%;
+    align-content: center;
+}
+
+.card{
+    height: 420px;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 400px;
+    background-color: rgba(0,0,0,0.5) !important;
+}
+
+.card-header h3{
+    color: white;
+}
+
+.btn-google {
+    color: white !important;
+    background-color: #ea4335;
+    margin-bottom: 25px;
+    margin-left: 68px;
+}
+
+.input-group-prepend span{
+    width: 50px;
+    background-color: #FFC312;
+    color: black;
+    border:0 !important;
+}
+
+input:focus{
+    outline: 0 0 0 0  !important;
+    box-shadow: 0 0 0 0 !important;
+
+}
+
+.remember{
+    color: white;
+}
+
+.remember input {
+    width: 20px;
+    height: 20px;
+    margin-left: 15px;
+    margin-right: 5px;
+}
+
+.login_btn{
+    color: black;
+    background-color: #FFC312;
+    width: 100px;
+}
+
+.login_btn:hover, .home-button:hover{
+    color: black;
+    background-color: white;
+}
+
+.links{
+    color: white;
+}
+
+.links a{
+    margin-left: 4px;
+}

@@ -1,13 +1,292 @@
 {% extends 'main.html' %}
-
+{% load allauth i18n socialaccount %}
 {% block content %}
-<style>
-    .home-container {
-        display: grid;
-        grid-template-columns: 1fr 3fr 1fr;
-    }
-</style>
-<h1>Home page [[ cse471-Anime ]] </h1>
-<h1>Home page- Welcome {{ user.username }} </h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ONEFLIX</title>
+
+    <link rel="icon" href="{% static 'img/favicon.ico' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Rubik:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
+            <a href="{% url 'home' %}" class="navbar-brand p-0">
+                <h1 class="m-0">ONEFLIX</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0">
+                    <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
+                    <a href="#" class="nav-item nav-link">Trending</a>
+                    <a href="#" class="nav-item nav-link">Genre</a>
+                    <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
+                    <a href="/accounts/login/" class="nav-item nav-link">LOG IN</a>
+                </div>
+                <button type="button" class="btn text-primary ms-3" data-bs-toggle="modal"
+                    data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
+                <a href="" class="btn btn-primary py-2 px-4 ms-3">Merch Store</a>
+            </div>
+        </nav>
+
+        <div id="header-carousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img class="w-100" src="{% static 'img/carousel-1.jpg' %}" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-end">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="display-1 text-white mb-md-4 animated zoomIn">Gintama</h1>
+                            <h5 class="text-white text-uppercase mb-3 animated slideInDown">Animi optio quod fugit. Minima
+                                delectus culpa facilis voluptas. Saepe numquam et voluptas ipsa et maiores totam. Architecto
+                                amet perferendis sequi. Aut molestias quasi qui voluptas et unde. </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="w-100" src="{% static 'img/carousel-2.jpg' %}" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-end">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="display-1 text-white mb-md-4 animated zoomIn">Tokyo Ghoul</h1>
+                            <h5 class="text-white text-uppercase mb-3 animated slideInDown">Animi optio quod fugit. Minima delectus culpa facilis voluptas. Saepe numquam et voluptas ipsa et maiores totam. Architecto amet perferendis sequi. Aut molestias quasi qui voluptas et unde. </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="w-100" src="{% static 'img/carousel-3.jpg' %}" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-end">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="display-1 text-white mb-md-4 animated zoomIn">Attack On Titan</h1>       
+                            <h5 class="text-white text-uppercase mb-3 animated slideInDown">Animi optio quod fugit. Minima delectus culpa facilis voluptas. Saepe numquam et voluptas ipsa et maiores totam. Architecto amet perferendis sequi. Aut molestias quasi qui voluptas et unde. </h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="w-100" src="{% static 'img/carousel-4.jpg' %}" alt="Image">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-end">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="display-1 text-white mb-md-4 animated zoomIn">Terror in Resonance</h1>
+                            <h5 class="text-white text-uppercase mb-3 animated slideInDown">Animi optio quod fugit. Minima delectus culpa facilis voluptas. Saepe numquam et voluptas ipsa et maiores totam. Architecto amet perferendis sequi. Aut molestias quasi qui voluptas et unde.</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center justify-content-center">
+                    <div class="input-group" style="max-width: 600px;">
+                        <input type="text" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
+                        <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrationModalLabel">Sign Up</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action='' method="POST">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Retype Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Retype your password" required>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fall Releases Section -->
+    <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                <h1 class="mb-0">Fall Releases</h1>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                            
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                            
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                            
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
+                    <div class="blog-item bg-light rounded overflow-hidden">
+                        <div class="blog-img position-relative overflow-hidden">
+                            <img class="img-fluid" src="{% static 'img/tobeupdated.jpg' %}" alt="">
+                            
+                        </div>
+                        <div class="p-4">
+                            <a class="text-uppercase" href="#">
+                                <h4 class="mb-3">To Be Updated</h4>
+                                <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="container-fluid text-white" style="background: #061429;">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-6">
+                    <div class="d-flex align-items-center justify-content-center" style="height: 75px;">
+                        <p class="mb-0">&copy; <a class="text-white border-bottom" href="#">ONEFLIX</a>. All Rights Reserved. 
+						    Owned by <a class="text-white border-bottom" href="#">Gallus Gallus Inc</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square rounded back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    <!-- JS Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'lib/counterup/counterup.min.js' %}"></script>
+    <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
+
 
 {% endblock content %}
