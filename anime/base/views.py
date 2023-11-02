@@ -7,7 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 
 from .models import  User
-from .forms import MyUserCreationForm
+from .forms import MyUserCreationForm, UserForm
+
+
+
 
 def loginPage(request):
     page='login'
