@@ -1,10 +1,8 @@
-
 :root {
     --primary: #d6d012;
     --light: #1541c7;
     --dark: #091E3E;
 }
-
 
 /*** Heading ***/
 h1, h2, .fw-bold {
