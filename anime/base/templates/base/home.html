@@ -7,6 +7,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>ONEFLIX</title>
 
     <link rel="icon" href="{% static 'img/favicon.ico' %}">
@@ -38,7 +39,20 @@
                     <a href="#" class="nav-item nav-link">Genre</a>
 
                     {% if request.user.is_authenticated %} 
-                        <a href="{% url 'user-profile' user.id %}" class="nav-item nav-link">Profile</a>
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu"> 
+                            <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="profile-pic">
+                                    <img src="{{ user.avatar.url }}" alt="Profile Picture">
+                                 </div>
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'user-profile' user.id %}"><i class="fas fa-sliders-h fa-fw"></i> Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logoutuser' %}"><i class="fas fa-sign-out-alt fa-fw"></i> Log Out</a></li>
+                              </ul>
+                            </li>
+                        </ul>
                     {% else %}
                         <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
                         <a href="/accounts/login/" class="nav-item nav-link">LOG IN</a>
@@ -254,6 +268,7 @@
     <script src="{% static 'lib/counterup/counterup.min.js' %}"></script>
     <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/nav_pic.js' %}"></script>
 
 
 

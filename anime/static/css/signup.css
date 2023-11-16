@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Numans');
 
 html,body{
-    background-image: url('https://3.bp.blogspot.com/-YGeLk4geUFg/W8TY2qbWgMI/AAAAAAAAEfc/Ua-3NhNGRSk3pcsxenyprpipPoQx9lFfACLcBGAs/s1600/1537820530470.jpg');
+    background-image: url('https://www.pixelstalk.net/wp-content/uploads/2016/10/Anime-Landscape-Backgrounds.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     font-family: 'Numans', sans-serif;
@@ -21,16 +21,16 @@ h3 {
 }
 
 .container{
-    margin-top: 75px;
+    margin-top: 75px; 
     height: 100%;
     align-content: center;
 }
 
 .card{
-    height: 500px;
+    height: 650px;
     margin-top: auto;
     margin-bottom: auto;
-    width: 400px;
+    width: 700px;
     background-color: rgba(0,0,0,0.5) !important;
     color: white;
 }
