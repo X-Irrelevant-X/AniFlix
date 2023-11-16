@@ -19,3 +19,26 @@ class User(AbstractUser):
     USERNAME_FIELD= 'email'
     REQUIRED_FIELDS=[]
     
+class Shop(models.Model):
+    image=models.ImageField(null=True, default='avatar.svg')
+    pname= models.CharField(max_length=200, null=True)
+    price=models.CharField(max_length=20, null=True)
+    customer_name=models.CharField(max_length=200, null=True)
+    instock=models.BooleanField(null=True)
+    sizeclass =(
+        ('S','S'),
+        ('M', 'M'),
+        ('L','L'),
+        ('XL','XL')
+
+    )
+    size=models.CharField(max_length=20,null=True, choices=sizeclass)
+    description= models.TextField(max_length=300, null=True)
+
+class customer(models.Model):
+    cname= models.CharField(max_length=200, null=True)
+    phone=models.CharField(max_length=200, null=True)
+    productid= models.ForeignKey('Shop', on_delete=models.CASCADE, null=True, blank=True)
+    address= models.CharField(max_length=200, null=True)
+    dateofpurchase= models.DateField(auto_now_add=True)
+    # paymentstatus=

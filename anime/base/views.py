@@ -89,3 +89,12 @@ def updateUser(request):
             return redirect('user-profile', pk=user.id)
 
     return render(request,'base/update-user.html',{'form':form})
+
+
+def shop(request):
+    user = request.user
+    context={
+        'user':user,
+        }
+
+    return render(request,'base/shop.html',context)

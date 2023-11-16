@@ -2,11 +2,12 @@
 
 {% block content %}
 
-{% load static %}
+
 <div class="profile">
   <div class="profile__avatar">
     <div >
-      <img src="{{ user.avatar.url }}" />
+      <img src="{{ user.avatar.url }}" >
+      <p>{{ user.avatar.url }}</p>
 
     </div>
   </div>
