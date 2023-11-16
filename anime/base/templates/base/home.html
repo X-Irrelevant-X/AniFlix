@@ -22,25 +22,6 @@
 </head>
 
 <body>
-    <div>
-        <style>
-            .home-container {
-                display: grid;
-                grid-template-columns: 1fr 3fr 1fr;
-            }
-        </style>
-        {% if request.user.is_authenticated %}
-                <div class="header__user">
-                <a href="{% url 'user-profile' user.id %}">
-                    <div >
-                    <img src="{{ request.user.avatar.url }}" />
-                    <h1>Home page - Welcome {{ user.username }} </h1>
-                    </div>
-                    <p> See Dashboard </p>
-                </a>
-
-        {% endif %}
-    </div>
 
     <div class="container-fluid position-relative p-0">
         <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
@@ -55,8 +36,13 @@
                     <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
                     <a href="#" class="nav-item nav-link">Trending</a>
                     <a href="#" class="nav-item nav-link">Genre</a>
-                    <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
-                    <a href="/accounts/login/" class="nav-item nav-link">LOG IN</a>
+
+                    {% if request.user.is_authenticated %} 
+                        <a href="{% url 'user-profile' user.id %}" class="nav-item nav-link">Profile</a>
+                    {% else %}
+                        <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
+                        <a href="/accounts/login/" class="nav-item nav-link">LOG IN</a>
+                    {% endif %}
                 </div>
                 <button type="button" class="btn text-primary ms-3" data-bs-toggle="modal"
                     data-bs-target="#searchModal"><i class="fa fa-search"></i></button>
