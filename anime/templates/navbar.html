@@ -1,0 +1,48 @@
+<!-- navbar.html -->
+<nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
+    <a href="{% url 'home' %}" class="navbar-brand p-0">
+        <h1 class="m-0">ONEFLIX</h1>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="fa fa-bars"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto py-0">
+            <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
+            <a href="#" class="nav-item nav-link">Trending</a>
+            <a href="#" class="nav-item nav-link">Genre</a>
+
+            {% if request.user.is_authenticated %} 
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="profile-pic">
+                                <img src="{{ user.avatar.url }}" alt="Profile Picture">
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="width: max-content; position: absolute; left: 50%; transform: translateX(-50%); padding: 15px;">
+                            <li style="height: 50px;">
+                                <a class="dropdown-item text-center" href="{% url 'user-profile' user.id %}" style="font-size: 18px; height: 100%;">
+                                    <i class="fas fa-sliders-h fa-fw"></i> Profile
+                                </a>
+                            </li>
+                            <li style="height: 50px;">
+                                <a class="dropdown-item text-center" href="{% url 'logoutuser' %}" style="font-size: 18px; height: 100%;">
+                                    <i class="fas fa-sign-out-alt fa-fw"></i> Log Out
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            
+            
+            
+            {% else %}
+                <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
+                <a href="/accounts/login/" class="nav-item nav-link">LOG IN</a>
+            {% endif %}
+        </div>
+        <button type="button" class="btn text-primary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search fa-lg"></i></button>
+        <a href="{% url 'shop' %}" class="btn btn-primary py-3 px-4 ms-3">Merch Store</a>
+    </div>
+</nav>
