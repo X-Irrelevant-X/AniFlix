@@ -12,7 +12,8 @@
         <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                <li class="breadcrumb-item"><a href="{% url 'user-profile' pk=user.id %}">Profile</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Profile</li>
             </ol>
         </nav>
         <div class="row gutters-sm">
