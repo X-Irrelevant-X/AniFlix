@@ -13,7 +13,7 @@
         <nav aria-label="breadcrumb" class="main-breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Third Party Sign Up</li>
+                <li class="breadcrumb-item active" aria-current="page">{% blocktrans with provider.name as provider %}{{ provider }} Sign Up{% endblocktrans %}</li>
             </ol>
         </nav>
         <div class="main-body">
