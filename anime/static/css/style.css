@@ -4,13 +4,69 @@
     --dark: #091E3E;
 }
 
+/*** Heading ***/
+h1, h2, .fw-bold {
+    font-weight: 800 !important;
+}
+
+h3, h4, .fw-semi-bold {
+    font-weight: 700 !important;
+}
+
+h5, h6, .fw-medium {
+    font-weight: 600 !important;
+}
+
+
+/*** Button ***/
+.btn {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    transition: .5s;
+}
+
+.btn-primary, .btn-secondary {
+    color: #FFFFFF;
+    box-shadow: inset 0 0 0 50px transparent;
+}
+
+.btn-primary:hover {
+    box-shadow: inset 0 0 0 0 var(--primary);
+}
+
+.btn-secondary:hover {
+    box-shadow: inset 0 0 0 0 var(--secondary);
+}
+
+.btn-square {
+    width: 36px;
+    height: 36px;
+}
+
+.btn-sm-square {
+    width: 30px;
+    height: 30px;
+}
+
+.btn-lg-square {
+    width: 48px;
+    height: 48px;
+}
+
+.btn-square, .btn-sm-square, .btn-lg-square {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+}
+
+
 /*** Navbar ***/
 .navbar-dark .navbar-nav .nav-link {
     font-family: 'Nunito', sans-serif;
     position: relative;
     margin-left: 25px;
-    padding: 17px 0;
-    color: #d6d012;
+    padding: 35px 0;
+    color: #FFFFFF;
     font-size: 18px;
     font-weight: 600;
     outline: none;
@@ -18,7 +74,11 @@
 }
 
 .sticky-top.navbar-dark .navbar-nav .nav-link {
-    padding: 10px 0;
+    padding: 20px 0;
+    color: var(--dark);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link.active {
     color: var(--primary);
 }
 
@@ -34,11 +94,10 @@
 @media (max-width: 991.98px) {
     .sticky-top.navbar-dark {
         position: relative;
-        background: rgba(0, 0, 0, 0);
+        background: #FFFFFF;
     }
 
-    .navbar-dark .navbar-nav .nav-link,
-    .navbar-dark .navbar-nav .nav-link.show,
+    .navbar-dark .navbar-nav .nav-link, .navbar-dark .navbar-nav .nav-link.show,
     .sticky-top.navbar-dark .navbar-nav .nav-link {
         padding: 10px 0;
         color: var(--dark);
@@ -61,7 +120,7 @@
     
     .sticky-top.navbar-dark {
         position: fixed;
-        background: rgba(0, 0, 0, 0); /* Transparent background when sticky */
+        background: #FFFFFF;
     }
 
     .navbar-dark .navbar-nav .nav-link::before {
@@ -221,7 +280,6 @@
     height: 50px;
     overflow: hidden;
     border-radius: 50%;
-    border: 2px solid gold; 
  }
  
  .profile-pic img{
@@ -241,15 +299,3 @@
    border-top: 0;
    border-bottom: 0.3em solid;
  }
- 
- .dropdown-toggle::after {
-    display: none;
-}
-
- body {
-    background-color: #002a4d; /* Change HTML page background color */
-}
-
-.container-fluid.py-5 .section-title h1 {
-    color: #FFFFFF; /* Change the text color to white */
-}

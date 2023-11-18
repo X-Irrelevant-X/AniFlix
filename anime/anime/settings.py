@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)+@!#9q)ro%ao*&d^7+l)bb56(+0@l&t$#(o_!9ic_#57vmc@o
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+EMAIL_HOST = "mail.servername.com"
 
 # Application definition
 
@@ -89,6 +89,9 @@ TEMPLATES = [
         },
     },
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = "mail.oneflix.com"
 
 AUTHENTICATION_BACKENDS = [
     
@@ -170,8 +173,7 @@ MEDIA_URL= '/images/'
 
 STATICFILES_DIRS=[
     BASE_DIR / 'static',
-    'anime\static',
-
+    
 ]
 
 MEDIA_ROOT= BASE_DIR / 'static/images'
