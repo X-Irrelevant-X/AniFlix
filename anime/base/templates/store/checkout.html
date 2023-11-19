@@ -42,9 +42,7 @@
 
        </div>
        <div class="box-element hidden" id="payment-info">
-           <small>PayPal Options</small>
-
-				<div id="paypal-button-container"></div>
+           <small>Payment Options</small>
 
        </div>
    </div>
@@ -68,34 +66,11 @@
 		</div>
 
        </div>
-
-    	<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
-
-	<script>
-        // Render the PayPal button into #paypal-button-container
-        paypal.Buttons({
-
-
-            // Set up the transaction
-            createOrder: function(data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: '0.01'
-                        }
-                    }]
-                });
-            },
-
-            // Finalize the transaction
-            onApprove: function(data, actions) {
-                return actions.order.capture().then(function(details) {
-                    // Show a success message to the buyer
-                    alert('Transaction completed by ' + details.payer.name.given_name + '!');
-                });
-            }
-
-        }).render('#paypal-button-container');
+       <script>
+        var shipping = '{{order.shipping}}'
+        var quantity = '{{order.get_total_quantity}}'
+        var totalPrice = '{{order.get_total_price|floatformat:2}}'
+        var storeURL = "{% url 'shop' %}"
     </script>
 
     <script type="text/javascript">
@@ -140,7 +115,7 @@
 
 
         }
-        var url='/process_order/'
+        var url='shop/process_order/'
         fetch(url,{
             method:'POST',
             headers:{

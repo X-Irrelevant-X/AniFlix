@@ -12,6 +12,7 @@ for (i = 0; i < updateBtns.length; i++) {
 		}else{
 			updateUserOrder(productId, action);
 		}
+        location.reload()
 	})
 }
 
@@ -38,14 +39,17 @@ function updateUserOrder(productId, action){
 		    location.reload()
 		});
 }
+
 function addCookieItem(productId,action){
 	console.log('User is not autheticated')
 	 if (action == 'add'){
 	 	if (cart[productId] == undefined){
 	 		cart[productId] = {'quantity':1}
+			location.reload()
 		}
 	 	else{
 	 		cart[productId]['quantity']+=1
+			 location.reload()
 		}
 	 }
 	if (action == 'remove') {
@@ -53,6 +57,7 @@ function addCookieItem(productId,action){
 		if (cart[productId]['quantity'] <= 0) {
 			console.log('Item should be deleted')
 			delete cart[productId]
+			location.reload()
 		}
 	}
 	console.log('Cart:',cart)

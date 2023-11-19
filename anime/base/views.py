@@ -94,7 +94,6 @@ def updateUser(request):
 
     return render(request,'base/update-user.html',{'form':form})
 
-
 def shop(request):
     data = cartData(request)
     cartItems = data['cartItems']
@@ -116,6 +115,35 @@ def cart(request):
     context = {'items': items, 'order': order, 'cartItems': cartItems}
     return render(request, 'store/cart.html', context)
 
+def updateItem(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    print('Action:', action)
+    print('Product:', productId)
+
+    customer, created = Customer.objects.get_or_create(user=request.user, cname=request.user.username)
+    product = Product.objects.get(id=productId)
+    order, created = Order.objects.get_or_create(customer=customer, completed=False)
+
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        orderItem.quantity += 1
+    elif action == 'remove':
+        orderItem.quantity -= 1
+
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+    else:
+        orderItem.save()
+
+    # Corrected method names
+    cart_total = order.get_cart_items
+    cart_totalPrice = order.get_cart_total
+
+    return JsonResponse('item was added', safe=False)
+
 
 def checkout(request):
     data = cartData(request)
@@ -127,33 +155,6 @@ def checkout(request):
     print(context)
 
     return render(request, 'store/checkout.html', context)
-
-
-def updateItem(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-    print('Action:', action)
-    print('Product:', productId)
-
-    customer = request.user.customer
-    product = Product.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, completed=False)
-
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
-
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
-
-    orderItem.save()
-
-    if orderItem.quantity <= 0:
-        orderItem.delete()
-
-    return JsonResponse('Item was added', safe=False)
-
 
 def processOrder(request):
     transaction_id = datetime.datetime.now().timestamp()
@@ -169,8 +170,7 @@ def processOrder(request):
             state=data['shipping']['state'],
             zipcode=data['shipping']['zipcode']
         )
-    else:
-        customer, order = guestOrder(request,data)
+    
     total = float(data['form']['total'])
     order.transaction_id = transaction_id
     if total == float(order.get_cart_total):

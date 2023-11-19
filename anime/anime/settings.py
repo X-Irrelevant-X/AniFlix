@@ -26,8 +26,9 @@ SECRET_KEY = 'django-insecure-)+@!#9q)ro%ao*&d^7+l)bb56(+0@l&t$#(o_!9ic_#57vmc@o
 DEBUG = True
 
 ALLOWED_HOSTS = []
-EMAIL_HOST = "mail.servername.com"
 
+EMAIL_HOST = "mail.servername.com"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Application definition
 
 
@@ -89,9 +90,6 @@ TEMPLATES = [
         },
     },
 ]
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = "mail.oneflix.com"
 
 AUTHENTICATION_BACKENDS = [
     
