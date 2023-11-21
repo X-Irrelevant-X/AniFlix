@@ -39,28 +39,3 @@ function updateUserOrder(productId, action){
 		    location.reload()
 		});
 }
-
-function addCookieItem(productId,action){
-	console.log('User is not autheticated')
-	 if (action == 'add'){
-	 	if (cart[productId] == undefined){
-	 		cart[productId] = {'quantity':1}
-			location.reload()
-		}
-	 	else{
-	 		cart[productId]['quantity']+=1
-			 location.reload()
-		}
-	 }
-	if (action == 'remove') {
-		cart[productId]['quantity'] -= 1
-		if (cart[productId]['quantity'] <= 0) {
-			console.log('Item should be deleted')
-			delete cart[productId]
-			location.reload()
-		}
-	}
-	console.log('Cart:',cart)
-	document.cookie = 'cart=' + JSON.stringify(cart)+";domain=;path=/"
-	location.reload()
-}
