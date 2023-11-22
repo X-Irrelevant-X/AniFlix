@@ -90,3 +90,40 @@ class ShippingAddress(models.Model):
 
     def __str__(self):
         return self.address
+
+
+
+
+
+
+class Location(models.Model):
+    name = models.CharField(max_length=250)
+    address = models.CharField(max_length=350)
+
+    def __str__(self):
+        return f'{self.name} ({self.address})'
+
+class Group(models.Model):
+    group_name = models.CharField(max_length=290)
+
+    def __str__(self):
+        return f'{self.group_name}'
+
+class Contributor(models.Model):
+    user=models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=2000)
+    supervisor_email = models.EmailField()
+    date = models.DateField()
+    slug = models.SlugField(unique=True)
+    description = models.TextField()
+    image = models.ImageField(upload_to='images')
+    location = models.ForeignKey(Location, on_delete=models.CASCADE)
+    group_name = models.CharField(max_length=290)
+    contributor = models.ManyToManyField(Contributor, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.title} - {self.slug}'

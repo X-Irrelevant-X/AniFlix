@@ -10,3 +10,8 @@ admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(ShippingAddress)
 
+#Samin
+admin.site.register(Event)
+admin.site.register(Location)
+admin.site.register(Group)
+admin.site.register(Contributor)

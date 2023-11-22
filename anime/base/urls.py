@@ -17,4 +17,13 @@ urlpatterns=[
     path('update_item/',views.updateItem,name="update_item"),
     path('shop/process_order/',views.processOrder,name="process_order"),
 
+
+    #Samin Rahman
+    path('Event/', views.index, name='all_socialize'),
+    path('Event/<slug:socializes_slug>/success', views.registration_complete, name='registration_complete'),
+    # our-domain.com/socialize
+    path('Event/<slug:socializes_slug>', views.socializes_details, name='socializes-details'), # our-domain.com/socialize/<dynamic-path-segment>a-second-socialize
+    # path('#')
+
+
 ]
