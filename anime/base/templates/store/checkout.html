@@ -1,52 +1,24 @@
 {% extends 'store/main.html' %}
 {% load static %}
-{% block title %}Checkout{% endblock title %}
 {% block content %}
+<head>
+   <style>
+      .centbox {
+         max-width: 900px;
+         margin: 0 auto;
+      }
+
+      .center-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 100vh; /* Adjust the height as needed */
+      }
+   </style>
+</head>
+<body>
    <div class="row">
-   <div class="col-lg-6">
-       <div class="box-element" id="form-wrapper">
-           <form id="form">
-               {% csrf_token %}
-                <div id="user-info">
-                    						<div class="form-field">
-							<input required class="form-control" type="text" name="name" placeholder="Name..">
-						</div>
-						<div class="form-field">
-							<input required class="form-control" type="email" name="email" placeholder="Email..">
-						</div>
-
-                </div>
-               <div id="shipping-info">
-                   						<hr>
-						<p>Shipping Information:</p>
-						<hr>
-						<div class="form-field">
-							<input class="form-control" type="text" name="address" placeholder="Address..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="city" placeholder="City..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="state" placeholder="State..">
-						</div>
-						<div class="form-field">
-							<input class="form-control" type="text" name="zipcode" placeholder="Zip code..">
-						</div>
-						
-					</div>
-
-					<hr>
-					<input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
-				</form>
-
-
-       </div>
-       <div class="box-element hidden" id="payment-info">
-           <small>Payment Options</small>
-
-       </div>
-   </div>
-    <div class="col-lg-6">
+    <div class="col-lg-6 centbox">
        <div class="box-element">
         <a class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
            <hr>
@@ -62,78 +34,9 @@
                {% endfor %}
 				<h5>Items: {{ order.get_cart_items }}</h5>
 				<h5>Total: ${{ order.get_cart_total|floatformat:2 }}</h5>
+            <button  type="submit"><a href="{% url 'payment' %}"> Payment </a></button>
 			</div>
 		</div>
-
-       </div>
-       <script>
-        var shipping = '{{order.shipping}}'
-        var quantity = '{{order.get_total_quantity}}'
-        var totalPrice = '{{order.get_total_price|floatformat:2}}'
-        var storeURL = "{% url 'shop' %}"
-    </script>
-
-    <script type="text/javascript">
-    if (user !== 'AnonymousUser')
-    {
-        document.getElementById('user-info').innerHTML=''
-    }
-
-    var total='{{ order.get_cart_total}}'
-    var form=document.getElementById('form')
-    csrftoken = form.getElementsByTagName('input')[0].value
-    console.log(csrftoken)
-    form.addEventListener('submit',function(e){
-        e.preventDefault()
-        console.log("Form Submitted...")
-        document.getElementById('form-button').classList.add("hidden");
-        document.getElementById('payment-info').classList.remove("hidden");
-    })
-    {#document.getElementById('make-payment').addEventListener("click",function(e){#}
-    {#    submitFormData()#}
-    {#})#}
-    function submitFormData(){
-        console.log("Payment button clicked")
-        var userFormData={
-            'name':null,
-            'email':null,
-            'total':total,
-        }
-        var shippingInfo={
-            'address':null,
-            'city':null,
-            'state':null,
-            'zipcode':null,
-        }
-        shippingInfo.address=form.address.value
-        shippingInfo.city=form.city.value
-        shippingInfo.state=form.state.value
-        shippingInfo.zipcode=form.zipcode.value
-        if (user =="AnonymousUser"){
-            userFormData.name=form.name.value
-            userFormData.city=form.email.value
-
-
-        }
-        var url='shop/process_order/'
-        fetch(url,{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'X-CSRFToken':csrftoken,
-
-            },
-            body:JSON.stringify({'form':userFormData,'shipping':shippingInfo})
-        })
-        .then((response)=>response.json())
-        .then((data)=>{
-            console.log("Success:",data);
-            alert("Transaction Completed")
-            cart={}
-            document.cookie='cart='+ JSON.stringify(cart) + ";domain=;path=/"
-            window.location.href="{% url 'shop' %}"
-            }
-        )
-    }
-    </script>
+   </div>
+</body>       
 {% endblock %}

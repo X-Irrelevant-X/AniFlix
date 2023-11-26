@@ -33,24 +33,19 @@
 
    <section id="registration">
      <h2>Register here to Join the Event!</h2>
-      <form action="{% url 'socializes-details' socialize.slug %}" method="POST">
+      <form action="{% url 'reg_com' socialize.slug %}" method="POST">
       {% csrf_token %}
-     <ul>
-     {{ form.as_ul }}
+       <ul>
+        <li>Email: {{ user.email }}</li>
+        <li>Phone: {{user.phone }}</li>
        </ul>
        <div id="registration-actions">
-        <button>Register</button>
+        <button action="{% url 'reg_com' socialize.slug %}" method="POST">Register</button>
       </div>
      </form>
    </section>
   </article>
 
-{% else %}
-<article>
- <section class="errormessage">
-   <p>OOPs!!!, No Anime events Found for this slug, Sorry!!</p>
- </section>
- </article>
 {% endif %}
 
 {% endblock %}

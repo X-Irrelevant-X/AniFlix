@@ -1,66 +1,64 @@
 var updateBtns = document.getElementsByClassName('update-cart');
 
 for (i = 0; i < updateBtns.length; i++) {
-	updateBtns[i].addEventListener('click', function(){
-		var productId = this.dataset.product;
-		var action = this.dataset.action;
-		console.log('productId:', productId, 'Action:', action);
-		console.log('USER:', user);
+    updateBtns[i].addEventListener('click', function () {
+        var productId = this.dataset.product;
+        var action = this.dataset.action;
+        console.log('productId:', productId, 'Action:', action);
+        console.log('USER:', user);
 
-		if (user === 'AnonymousUser'){
-			addCookieItem(productId,action)
-		}else{
-			updateUserOrder(productId, action);
-		}
-        location.reload()
-	})
+        updateUserOrder(productId, action);
+    })
 }
 
-function updateUserOrder(productId, action){
-	console.log('User is authenticated, sending data...');
+function updateUserOrder(productId, action) {
+    console.log('User is authenticated, sending data...');
 
-		var url = '/update_item/';
+    var url = '/update_item/';
 
-		fetch(url, {
-			method:'POST',
-			headers:{
-				'Content-Type':'application/json',
-				'X-CSRFToken':csrftoken
-			},
-			body:JSON.stringify({'productId':productId, 'action':action})
-		})
-		.then((response) => {
-		   return response.json(); //why is there a semicolon hereNo id
-			// Because this is js
-			//ok
-		})
-		.then((data) => {
-		    console.log('Data:', data);
-		    location.reload()
-		});
-}
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({ 'productId': productId, 'action': action })
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then((data) => {
+        console.log('Data:', data);
 
-function addCookieItem(productId,action){
-	console.log('User is not autheticated')
-	 if (action == 'add'){
-	 	if (cart[productId] == undefined){
-	 		cart[productId] = {'quantity':1}
-			location.reload()
-		}
-	 	else{
-	 		cart[productId]['quantity']+=1
-			 location.reload()
-		}
-	 }
-	if (action == 'remove') {
-		cart[productId]['quantity'] -= 1
-		if (cart[productId]['quantity'] <= 0) {
-			console.log('Item should be deleted')
-			delete cart[productId]
-			location.reload()
-		}
-	}
-	console.log('Cart:',cart)
-	document.cookie = 'cart=' + JSON.stringify(cart)+";domain=;path=/"
-	location.reload()
+        var clickedButton = document.querySelector('.update-cart[data-product="' + productId + '"][data-action="' + action + '"]');
+        var container = clickedButton.closest('.cart-row');
+
+        document.querySelector('.cart-total').innerText = data.cartItems;
+
+        var itemQuantityElement = document.querySelector('.quantity'); 
+        if (itemQuantityElement) {
+            itemQuantityElement.innerText = data.itemQuantity;
+
+			if (data.itemQuantity <= 0) {
+                var cartRow = itemQuantityElement.closest('.cart-row');
+                if (cartRow) {
+                    cartRow.remove();
+                }
+            }
+        }
+
+		var totalItemsElement = document.querySelector('.total-items');
+        var totalAmountElement = document.querySelector('.total-amount');
+
+        if (totalItemsElement && totalAmountElement) {
+            totalItemsElement.innerText = data.cartItems;
+            totalAmountElement.innerText = '$' + data.cartTotal.toFixed(2); 
+        }
+
+        var itemTotalElement = container.querySelector('.item-total');
+        if (itemTotalElement) {
+            itemTotalElement.innerText = '$' + data.itemTotal.toFixed(2);
+        }
+    });
+    //location.reload();
 }

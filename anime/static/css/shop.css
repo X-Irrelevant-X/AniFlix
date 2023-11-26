@@ -173,3 +173,11 @@ h1,h2,h3,h4,h5,h6{
    border-top: 0;
    border-bottom: 0.3em solid;
  }
+
+ .sticky-top {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000; 
+}
+

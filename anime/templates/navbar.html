@@ -12,7 +12,8 @@
             <a href="#" class="nav-item nav-link">Trending</a>
             <a href="#" class="nav-item nav-link">Genre</a>
 
-            {% if request.user.is_authenticated %} 
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'all_socialize' %}" class="nav-item nav-link">Events</a>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -23,19 +24,19 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown" style="width: max-content; position: absolute; left: 50%; transform: translateX(-50%); padding: 15px;">
                             <li style="height: 50px;">
                                 <a class="dropdown-item text-center" href="{% url 'user-profile' user.id %}" style="font-size: 18px; height: 100%;">
-                                    <i class="fas fa-sliders-h fa-fw"></i> Profile
-                                </a>
+                                    <i class="fas fa-sliders-h fa-fw"></i> Profile </a>
+                            </li>
+                            <li style="height: 50px;">
+                                <a class="dropdown-item text-center" href="#" style="font-size: 18px; height: 100%;">
+                                    <i class="fas fa-sliders-h fa-fw"></i> Updates </a>
                             </li>
                             <li style="height: 50px;">
                                 <a class="dropdown-item text-center" href="{% url 'logoutuser' %}" style="font-size: 18px; height: 100%;">
-                                    <i class="fas fa-sign-out-alt fa-fw"></i> Log Out
-                                </a>
+                                    <i class="fas fa-sign-out-alt fa-fw"></i> Log Out </a>
                             </li>
                         </ul>
                     </li>
                 </ul>
-            
-            
             
             {% else %}
                 <a href="/accounts/signup/" class="nav-item nav-link">Sign Up</a>
@@ -43,7 +44,7 @@
             {% endif %}
         </div>
         <button type="button" class="btn text-primary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search fa-lg"></i></button>
-        <a href="{% url 'shop' %}" class="btn btn-primary py-3 px-4 ms-3">Merch Store</a>
+        <a href="{% url 'shop' %}" class="btn btn-primary py-3 px-4 ms-3" class="nav-item nav-link" onclick="return showSignInWarning();">Merch Store</a>
     </div>
 </nav>
 
@@ -64,3 +65,13 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function showSignInWarning() {
+            {% if not request.user.is_authenticated %}
+                alert("Please Sign In to access the Merch Store.");
+                window.location.href="/accounts/login/"; 
+                return false;  
+            {% endif %}
+        }
+    </script>

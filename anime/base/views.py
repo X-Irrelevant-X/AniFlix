@@ -11,9 +11,14 @@ from .forms import MyUserCreationForm, UserForm
 from django.http import JsonResponse
 import json
 from .utils import *
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .models import Product
+from .utils import cartData
+
 from django.views.decorators.csrf import csrf_exempt
 import datetime
-
+from sslcommerz_lib import SSLCOMMERZ 
 
 
 def loginPage(request):
@@ -81,6 +86,15 @@ def userProfile(request,pk):
     context={'user':user,}
     return render(request,'base/profile.html',context)
 
+
+def notification(request):
+    user = request.user
+    contributor, _ = Contributor.objects.get_or_create(user=user)
+    events,_ = Event.objects.filter(contributor=user)
+
+    context = {'user': user, 'events': events}
+    return render(request, 'base/updates.html', context)
+
 @login_required(login_url='login')
 def updateUser(request):
     user=request.user
@@ -94,16 +108,46 @@ def updateUser(request):
 
     return render(request,'base/update-user.html',{'form':form})
 
+@login_required(login_url='/accounts/login/')
 def shop(request):
     data = cartData(request)
     cartItems = data['cartItems']
-    order=data['order']
-    items=data['items']
+    order = data['order']
+    items = data['items']
 
     products = Product.objects.all()
-    context={'products': products, 'cartItems': cartItems}
+    
+    sort_by = request.GET.get('sort_by', 'default')
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        products = products.filter(Q(name__icontains=search_query))
 
-    return render(request,'store/shop.html',context)
+    # Sort the products based on the sorting parameter
+    if sort_by == 'low_to_high':
+        products = products.order_by('price')
+    elif sort_by == 'high_to_low':
+        products = products.order_by('-price')
+    elif sort_by == 'new_arrival':
+        products = list(reversed(products))
+
+    paginator = Paginator(products, 6)
+    page = request.GET.get('page', 1)
+
+    try:
+        products = paginator.page(page)
+    except PageNotAnInteger:
+        products = paginator.page(1)
+    except EmptyPage:
+        products = paginator.page(paginator.num_pages)
+
+    context = {
+        'products': products,
+        'cartItems': cartItems,
+        'sort_by': sort_by,
+    }
+
+    return render(request, 'store/shop.html', context)
 
 def cart(request):
     data = cartData(request)
@@ -134,16 +178,23 @@ def updateItem(request):
         orderItem.quantity -= 1
 
     if orderItem.quantity <= 0:
-        orderItem.delete()
+        orderItem.delete() 
     else:
         orderItem.save()
 
-    # Corrected method names
     cart_total = order.get_cart_items
     cart_totalPrice = order.get_cart_total
 
-    return JsonResponse('item was added', safe=False)
+    response_data = {
+        'message': 'Item was added',
+        'cartItems': cart_total,
+        'itemQuantity': orderItem.quantity,
+        'cartTotal': order.get_cart_total,
+        'itemTotal': orderItem.get_total,
+        'productId': productId,
+    }
 
+    return JsonResponse(response_data, safe=False)
 
 def checkout(request):
     data = cartData(request)
@@ -180,10 +231,8 @@ def processOrder(request):
     return JsonResponse("Payment completed..", safe=False)
 
 
-
 #Samin Rahman
 from .models import Event, Contributor
-from .forms import RegistrationForm
 def index(request):
     event = Event.objects.all()
     return render(request, 'socialize/index.html', {
@@ -194,38 +243,16 @@ def index(request):
 #   return HttpResponse('Hello django!')
 
 def socializes_details(request, socializes_slug):
-    # print(socializes_slug)
+    user = request.user
     try:
-      selected_Event = Event.objects.get(slug=socializes_slug)
-      if request.method == 'GET':
-        # selected_socialize = Socialize.objects.get(slug=socializes_slug)
-        registration_form = RegistrationForm()
-        # return render(request, 'socialize/socializes-details.html', {
-        # 'socialize_found': True,
-        # 'socialize': selected_socialize,
-        # 'form': registration_form
-        #  'form': registration_form
-        # 'socialize_title': selected_socialize['title'],
-        # Using dot notation in this method
-        # 'socialize_title': selected_socialize.title,
-        # 'socialize_description': selected_socialize['description']
-        # 'socialize_description': selected_socialize.description
-    #    })
-      else:
-        registration_form = RegistrationForm(request.POST)
-        if registration_form.is_valid():
-         # contributor = registration_form.save()
-           user_email = registration_form.cleaned_data['email_address']
-           user_phone = registration_form.cleaned_data['phone_number']
-           contributor,_ = Contributor.objects.get_or_create(email_address=user_email, phone_number=user_phone)
-           selected_Event.contributor.add(contributor)
-           return redirect('registration_complete', socializes_slug=socializes_slug)
+        selected_Event = Event.objects.get(slug=socializes_slug)
+        contributor,_ = Contributor.objects.get_or_create(user=request.user)
+        selected_Event.contributor.add(contributor)
 
-
-      return render(request, 'socialize/socializes-details.html', {
+        return render(request, 'socialize/socializes-details.html', {
             'socialize_found': True,
             'socialize': selected_Event,
-            'form': registration_form
+            'user': user,
         })
 
     except Exception as exc:
@@ -235,7 +262,71 @@ def socializes_details(request, socializes_slug):
         })
 
 def registration_complete(request, socializes_slug):
-  Event = Event.objects.get(slug=socializes_slug)
-  return render(request, 'socialize/registration-complete.html', {
-        'supervisor_email': Event.supervisor_email
+    event_instance = Event.objects.get(slug=socializes_slug)
+    return render(request, 'socialize/registration-complete.html', {
+        'supervisor_email': event_instance.supervisor_email
     })
+
+
+@csrf_exempt
+def payment(request):
+    
+    try:
+        
+        customer = request.user.customer
+        print(customer)
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        settings = { 'store_id': 'ripbo655c34b0d16ed', 'store_pass': 'ripbo655c34b0d16ed@ssl', 'issandbox': True }
+        sslcz = SSLCOMMERZ(settings)
+        post_body = {}
+        post_body['total_amount'] = order.get_cart_total
+        post_body['currency'] = "BDT"
+        post_body['tran_id'] = "1"
+        post_body['success_url'] = "http://127.0.0.1:8000/shop/confirmed_pay/"
+        post_body['fail_url'] = "http://127.0.0.1:8000/shop/checkout/"
+        post_body['cancel_url'] = "http://127.0.0.1:8000/shop/checkout/"
+        post_body['emi_option'] = 0
+        post_body['cus_name'] = 'jilan'
+        post_body['cus_email'] = 'abc@gmail.com'
+        post_body['cus_phone'] = '0123'
+        
+        post_body['cus_add1'] = 'Dhaka'
+        post_body['cus_city'] = 'anywhere'
+        post_body['cus_country'] = "Bangladesh"
+        post_body['shipping_method'] = "NO"
+        post_body['multi_card_name'] = ""
+        post_body['num_of_item'] = '15'
+        post_body['product_name'] = "Test"
+        post_body['product_category'] = "Test Category"
+        post_body['product_profile'] = "general"
+
+        response = sslcz.createSession(post_body) 
+        
+        print(response)
+
+        if(response['status'] == "SUCCESS"):
+            return redirect(response['GatewayPageURL'])
+        
+        return redirect(response['GatewayPageURL'])
+    except:
+        return render(request, 'store/checkout.html')
+
+@csrf_exempt
+def payment_confirmed(request):
+    # transaction_id = datetime.datetime.now().timestamp()
+    
+
+    
+    # customer = request.user.customer
+    # order, created = Order.objects.get_or_create(customer=customer, completed=False)
+
+    
+    # order.transaction_id = transaction_id
+    
+    # order.completed = True
+    # order.save()
+
+    # orderItem, created = OrderItem.objects.get_or_create(order=order)
+    # orderItem.delete()
+
+    return render( request, 'store/payment_successful.html')
