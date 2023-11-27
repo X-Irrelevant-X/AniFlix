@@ -18,6 +18,7 @@ urlpatterns=[
     path('update_item/',views.updateItem,name="update_item"),
     path('shop/payment/',views.payment,name="payment"),
     path('shop/confirmed_pay/',views.payment_confirmed, name='payment_confirmed'),
+    path('shop/recipt/',views.recipt,name="recipt"),
 
 
     #Samin Rahman

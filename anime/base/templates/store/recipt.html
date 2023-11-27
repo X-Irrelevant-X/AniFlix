@@ -1,0 +1,136 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<head>
+   <style>
+      .centbox {
+         max-width: 900px;
+         margin: 0 auto;
+      }
+
+      .center-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 100vh;
+      }
+   </style>
+</head>
+<body>
+    <div class="col-lg-6 centbox">
+        <hr>
+        <h2 style="text-align: center;"><strong>Order Recipt</strong></h2>
+        <hr>
+        <div class="box-element">
+            <div class="card-body">
+                
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Username:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                        {{ user.username }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Full Name:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                        {{ user.name }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Email:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                        {{ user.email }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Gender:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                    {{ user.gender }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Phone Number:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                    {{ user.phone }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Address:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                    {{ user.address }}
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Order Time:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary" style="color: black;">
+                        {% now "H:i d-m-Y " %}
+                    </div>
+                </div>
+                <hr>
+                <div class="box-element">
+                    <h3>Order Summary</h3>
+                    <hr>
+                    {% for item in items %}
+                        <div class="cart-row">
+                        <div style="flex:2"><img class="row-image" src="{{ item.product.image.url }}"></div>
+                            <div style="flex:2"><p>{{ item.product.name }}</p></div>
+                            <div style="flex:1"><p>{{ item.product.price }}</p></div>
+                            <div style="flex:1"><p>{{ item.quantity }}</p></div>
+                        </div>
+                    {% endfor %}
+                    <h5>Items: {{ order.get_cart_items }}</h5>
+                    <h5>Total: ${{ order.get_cart_total|floatformat:2 }}</h5>
+                    <button type="button" onclick="printPage()" style="text-align: center;">Print</button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</body> 
+
+<script>
+    function printPage() {
+        // Apply print styles to fit the page
+        var printStyles = `
+            @media print {
+                body {
+                    width: 100%;
+                    height: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                .box-element {
+                    max-width: 100%;
+                }
+                /* Add any additional styles as needed */
+            }
+        `;
+
+        var style = document.createElement('style');
+        style.type = 'text/css';
+        style.appendChild(document.createTextNode(printStyles));
+        document.head.appendChild(style);
+
+        window.print();
+    }
+</script>
+{% endblock %}

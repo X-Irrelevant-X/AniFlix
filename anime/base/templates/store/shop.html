@@ -64,7 +64,7 @@
             <div class="col-md-5 text-center sorta">
                 <label for="sortSelect" class="form-label">Sort By:</label>
                 <select class="form-select" id="sortSelect" onchange="sortProducts(this.value)">
-                    <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Default</option>
+                    <option value="default" {% if sort_by == 'default' %}selected{% endif %}>Old to New</option>
                     <option value="new_arrival" {% if sort_by == 'new_arrival' %}selected{% endif %}>New to Old</option>
                     <option value="low_to_high" {% if sort_by == 'low_to_high' %}selected{% endif %}>Price Low to High</option>
                     <option value="high_to_low" {% if sort_by == 'high_to_low' %}selected{% endif %}>Price High to Low</option>

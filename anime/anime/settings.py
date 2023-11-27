@@ -31,7 +31,7 @@ EMAIL_HOST = "mail.servername.com"
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Application definition
 
-
+TIME_ZONE = 'Asia/Dhaka'
 
 INSTALLED_APPS = [
     'django.contrib.admin',

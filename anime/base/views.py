@@ -121,8 +121,8 @@ def shop(request):
     search_query = request.GET.get('q', '')
     
     if search_query:
-        products = products.filter(Q(name__icontains=search_query))
-
+        products = products.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query) | Q(related_anime__icontains=search_query))
+        
     # Sort the products based on the sorting parameter
     if sort_by == 'low_to_high':
         products = products.order_by('price')
@@ -330,3 +330,15 @@ def payment_confirmed(request):
     # orderItem.delete()
 
     return render( request, 'store/payment_successful.html')
+
+def recipt(request):
+    user = request.user
+    
+    data = cartData(request)
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+
+    context = {'user':user, 'items': items, 'order': order, 'cartItems': cartItems}
+
+    return render(request,'store/recipt.html',context)
