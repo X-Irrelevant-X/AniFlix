@@ -1,40 +1,40 @@
-{% extends 'main.html' %} 
+
 {% load static %}
 {% block content %}
+<html>
+<head>
+    <title>My Events</title>
+    {% include 'cssjslink.html' %}
+    <link href="{% static 'css/updates.css' %}" rel="stylesheet">
 
-
-{% include 'cssjslink.html' %}
-<link href="{% static 'css/profile.css' %}" rel="stylesheet">
-
-
-<div class="container">
-  <div class="main-body">
-      <nav aria-label="breadcrumb" class="main-breadcrumb">
-          <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-              <li class="breadcrumb-item active" aria-current="page">Updates</li>
-          </ol>
-      </nav>
-
-        <div class="row g-5" id="defaultProducts">
-            {% for event in events %}
-                <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
-                    <div class="blog-item bg-light rounded overflow-hidden" style="border: 2px solid #ccc;">
-                        <div class="blog-img position-relative overflow-hidden">
-                            <img class="thumbnail" src="{{ event.image.url }}" style="width: 100%; height: auto; aspect-ratio: 4/4;" />
-                        </div>
-                        <div class="p-4">
-                            <h6><strong>{{ event.title }}</strong></h6>
-                            <hr>
-                            <h4 style="display:inline-block; float: right;">{{ event.location }}</h4>
-                            <h4 style="display:inline-block; float: right;">{{ event.date }}</h4>
+</head>
+<body>
+    <div>
+        {% include 'navbar.html' %}
+    </div>
+    <div class="container mika">
+        <div class="main-body justify-content-center">
+            <h3 class="mx-auto text-center">My Events:</h3>
+            <div class="row g-5 evcard equal">
+                {% for event in events %}
+                    <div class="col-lg-4">
+                        <div class="blog-item bg-light rounded overflow-hidden" style="border: 2px solid #ccc;">
+                            <div class="blog-img position-relative overflow-hidden">
+                                <img class="img-fluid" src="{{ event.event.image.url }}" style="width: 400px; height: 250px;">
+                            </div>
+                            <div class="p-4">
+                                <h5 class="mx-auto text-center"><strong>{{ event.event.title }}</strong></h5>
+                                <hr>
+                                <p>Location: {{ event.event.location }}</p>
+                                <p>Date: {{ event.event.date }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
-  </div>
-</div>
-
-{% include 'footer.html' %}
+    </div>
+    {% include 'footer.html' %}
+</body>
+</html>
 {% endblock content %}

@@ -7,11 +7,11 @@ for (i = 0; i < updateBtns.length; i++) {
         console.log('productId:', productId, 'Action:', action);
         console.log('USER:', user);
 
-        updateUserOrder(productId, action);
+        updateUserOrder(productId, action, this); // Pass the clicked button as an argument
     })
 }
 
-function updateUserOrder(productId, action) {
+function updateUserOrder(productId, action, clickedButton) {
     console.log('User is authenticated, sending data...');
 
     var url = '/update_item/';
@@ -30,16 +30,16 @@ function updateUserOrder(productId, action) {
     .then((data) => {
         console.log('Data:', data);
 
-        var clickedButton = document.querySelector('.update-cart[data-product="' + productId + '"][data-action="' + action + '"]');
+        // Use the clickedButton argument instead of querying the DOM again
         var container = clickedButton.closest('.cart-row');
 
         document.querySelector('.cart-total').innerText = data.cartItems;
 
-        var itemQuantityElement = document.querySelector('.quantity'); 
+        var itemQuantityElement = container.querySelector('.quantity');
         if (itemQuantityElement) {
             itemQuantityElement.innerText = data.itemQuantity;
 
-			if (data.itemQuantity <= 0) {
+            if (data.itemQuantity <= 0) {
                 var cartRow = itemQuantityElement.closest('.cart-row');
                 if (cartRow) {
                     cartRow.remove();
@@ -47,12 +47,12 @@ function updateUserOrder(productId, action) {
             }
         }
 
-		var totalItemsElement = document.querySelector('.total-items');
+        var totalItemsElement = document.querySelector('.total-items');
         var totalAmountElement = document.querySelector('.total-amount');
 
         if (totalItemsElement && totalAmountElement) {
             totalItemsElement.innerText = data.cartItems;
-            totalAmountElement.innerText = '$' + data.cartTotal.toFixed(2); 
+            totalAmountElement.innerText = '$' + data.cartTotal.toFixed(2);
         }
 
         var itemTotalElement = container.querySelector('.item-total');

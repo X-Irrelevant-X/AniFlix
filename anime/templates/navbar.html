@@ -1,5 +1,5 @@
 <!-- navbar.html -->
-<nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
+<nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0 navbody">
     <a href="{% url 'home' %}" class="navbar-brand p-0">
         <h1 class="m-0">ONEFLIX</h1>
     </a>
@@ -9,11 +9,11 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="navbar-nav ms-auto py-0">
             <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
-            <a href="#" class="nav-item nav-link">Trending</a>
-            <a href="#" class="nav-item nav-link">Genre</a>
+            <a href="{% url 'genre' %}" class="nav-item nav-link">Genre</a>
 
             {% if request.user.is_authenticated %}
                 <a href="{% url 'all_socialize' %}" class="nav-item nav-link">Events</a>
+                <a href="{% url 'favorites' %}" class="nav-item nav-link">Favorites</a>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -27,8 +27,12 @@
                                     <i class="fas fa-sliders-h fa-fw"></i> Profile </a>
                             </li>
                             <li style="height: 50px;">
-                                <a class="dropdown-item text-center" href="#" style="font-size: 18px; height: 100%;">
-                                    <i class="fas fa-sliders-h fa-fw"></i> Updates </a>
+                                <a class="dropdown-item text-center" href="{% url 'orders' %}" style="font-size: 18px; height: 100%;">
+                                    <i class="fas fa-sliders-h fa-fw"></i> My Orders </a>
+                            </li>
+                            <li style="height: 50px;">
+                                <a class="dropdown-item text-center" href="{% url 'updates' user.id %}" style="font-size: 18px; height: 100%;">
+                                    <i class="fas fa-sliders-h fa-fw"></i> My Events </a>
                             </li>
                             <li style="height: 50px;">
                                 <a class="dropdown-item text-center" href="{% url 'logoutuser' %}" style="font-size: 18px; height: 100%;">
@@ -50,28 +54,29 @@
 
 
 <!-- Search Modal -->
-    <div class="modal fade" id="searchModal" tabindex="-1">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
-                <div class="modal-header border-0">
-                    <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body d-flex align-items-center justify-content-center">
-                    <div class="input-group" style="max-width: 600px;">
-                        <input type="text" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
-                        <button class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
-                    </div>
-                </div>
+<div class="modal fade" id="searchModal" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content" style="background: rgba(9, 30, 62, .7);">
+            <div class="modal-header border-0">
+                <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex align-items-center justify-content-center">
+                <form method="GET" action="{% url 'home' %}" class="input-group" style="max-width: 600px;">
+                    <input type="text" name="q" class="form-control bg-transparent border-primary p-3" placeholder="Type search keyword">
+                    <button type="submit" class="btn btn-primary px-4"><i class="bi bi-search"></i></button>
+                </form>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function showSignInWarning() {
-            {% if not request.user.is_authenticated %}
-                alert("Please Sign In to access the Merch Store.");
-                window.location.href="/accounts/login/"; 
-                return false;  
-            {% endif %}
-        }
-    </script>
+
+<script>
+    function showSignInWarning() {
+        {% if not request.user.is_authenticated %}
+            alert("Please Sign In to access the Merch Store.");
+            window.location.href="/accounts/login/"; 
+            return false;  
+        {% endif %}
+    }
+</script>

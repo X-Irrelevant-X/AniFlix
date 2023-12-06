@@ -11,6 +11,9 @@
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'css/payment.css' %}">
+
+        
+
     </head>
     <body class="generic-template">
 
@@ -59,7 +62,12 @@
                                 <td>
                                     <p style="font-size: 30px;">Your transaction was successful!</p>
                                     <br>
-                                    <p><strong><a href="{% url 'recipt' %}">Payment Details</a></strong><br/>
+                                    <p>
+                                        <strong>Transaction ID: {{ trn }}</strong>
+                                        <br>
+                                        <strong>Payment Validation ID: {{ valid }}</strong>
+                                    </p>
+                                    <p><strong><a href="{% url 'recipt' orderid %}">Invoice Details</a></strong><br/>
                                     <p style="font-size: 30px;">Please use our services again. Thank you.&nbsp;&nbsp;&nbsp;&nbsp;<br/></p>
                                 </td>
                         </div>
@@ -87,6 +95,8 @@
             </tr>
         </table>
 
+
+       
         {% include 'footer.html' %}
     </body>
 </html>

@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import User, Customer
+from .models import User, Customer, Comment
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 
@@ -20,4 +20,7 @@ class UserForm(ModelForm):
 class RegistrationForm(forms.Form):
     email_address = forms.EmailField(label='Your email address')
     phone_number = forms.IntegerField(label='Please enter your phone number')
+    
+
+
 

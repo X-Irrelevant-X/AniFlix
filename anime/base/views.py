@@ -1,24 +1,23 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.db.models import Q
+from django.db.models import F
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
 from django.contrib.auth import authenticate,login,logout
-
 from .models import  *
 from .forms import MyUserCreationForm, UserForm
 from django.http import JsonResponse
 import json
 from .utils import *
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Product
+from .models import Product, Episode, Comment
 from .utils import cartData
-
 from django.views.decorators.csrf import csrf_exempt
 import datetime
 from sslcommerz_lib import SSLCOMMERZ 
+from django.db.models import Avg
+from django.views.generic import ListView
 
 
 def loginPage(request):
@@ -32,7 +31,7 @@ def loginPage(request):
         try:
             user=User.objects.get(email=email)
         except:
-            return HttpResponse("Fuck off you are not a registered user")
+            return HttpResponse("Sorry you are not a registered user")
         user=authenticate(request,email=email, password=password)
 
         if user is not None:
@@ -67,16 +66,33 @@ def registerPage(request):
     return render(request, 'base/login-register.html', {'form': form})
 
 
+
 def Home(request):
-
     user = request.user
-
+    all_animes = Anime.objects.all()
     
-    context={
-        'user':user,
-        }
+    search_query = request.GET.get('q', '')
+    
+    if search_query:
+        all_animes = all_animes.filter(Q(name__icontains=search_query)).distinct()
 
-    return render(request,'base/home.html',context)
+    paginator = Paginator(all_animes, 6)
+    page = request.GET.get('page', 1)
+
+    try:
+        all_animes = paginator.page(page)
+    except PageNotAnInteger:
+        all_animes = paginator.page(1)
+    except EmptyPage:
+        all_animes = paginator.page(paginator.num_pages)
+        
+    context = {
+        'user': user,
+        'all_animes': all_animes,
+    }
+
+    return render(request, 'base/home.html', context)
+
 
 def userProfile(request,pk):
 
@@ -87,12 +103,12 @@ def userProfile(request,pk):
     return render(request,'base/profile.html',context)
 
 
-def notification(request):
+def notification(request, pk):
     user = request.user
-    contributor, _ = Contributor.objects.get_or_create(user=user)
-    events,_ = Event.objects.filter(contributor=user)
-
-    context = {'user': user, 'events': events}
+    
+    contributor = Contributor.objects.filter(user=request.user)
+    
+    context = {'user': user, 'events': contributor}
     return render(request, 'base/updates.html', context)
 
 @login_required(login_url='login')
@@ -123,7 +139,6 @@ def shop(request):
     if search_query:
         products = products.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query) | Q(related_anime__icontains=search_query))
         
-    # Sort the products based on the sorting parameter
     if sort_by == 'low_to_high':
         products = products.order_by('price')
     elif sort_by == 'high_to_low':
@@ -236,18 +251,16 @@ from .models import Event, Contributor
 def index(request):
     event = Event.objects.all()
     return render(request, 'socialize/index.html', {
-        #'show_socialize': False,
-        # 'show_socialize': True,
+
         'socialize': event
     })
-#   return HttpResponse('Hello django!')
+
 
 def socializes_details(request, socializes_slug):
     user = request.user
     try:
         selected_Event = Event.objects.get(slug=socializes_slug)
-        contributor,_ = Contributor.objects.get_or_create(user=request.user)
-        selected_Event.contributor.add(contributor)
+        
 
         return render(request, 'socialize/socializes-details.html', {
             'socialize_found': True,
@@ -262,6 +275,10 @@ def socializes_details(request, socializes_slug):
         })
 
 def registration_complete(request, socializes_slug):
+    selected_Event = Event.objects.get(slug=socializes_slug)
+    contributor = Contributor.objects.create(user=request.user, event=selected_Event)
+    
+
     event_instance = Event.objects.get(slug=socializes_slug)
     return render(request, 'socialize/registration-complete.html', {
         'supervisor_email': event_instance.supervisor_email
@@ -270,9 +287,8 @@ def registration_complete(request, socializes_slug):
 
 @csrf_exempt
 def payment(request):
-    
     try:
-        
+        transaction_id = datetime.datetime.now().timestamp()
         customer = request.user.customer
         print(customer)
         order, created = Order.objects.get_or_create(customer=customer, completed=False)
@@ -281,8 +297,8 @@ def payment(request):
         post_body = {}
         post_body['total_amount'] = order.get_cart_total
         post_body['currency'] = "BDT"
-        post_body['tran_id'] = "1"
-        post_body['success_url'] = "http://127.0.0.1:8000/shop/confirmed_pay/"
+        post_body['tran_id'] = transaction_id
+        post_body['success_url'] = f"http://127.0.0.1:8000/shop/confirmed_pay/{customer.id}"
         post_body['fail_url'] = "http://127.0.0.1:8000/shop/checkout/"
         post_body['cancel_url'] = "http://127.0.0.1:8000/shop/checkout/"
         post_body['emi_option'] = 0
@@ -312,33 +328,169 @@ def payment(request):
         return render(request, 'store/checkout.html')
 
 @csrf_exempt
-def payment_confirmed(request):
-    # transaction_id = datetime.datetime.now().timestamp()
-    
+def payment_confirmed(request, pk):
+    if request.method == 'post' or request.method =='POST':
+        payment_data = request.POST
+        customer = Customer.objects.get(id=pk)
+        order, created = Order.objects.get_or_create(customer=customer, completed=False)
+        
+        if payment_data['status']=='VALID':
 
-    
-    # customer = request.user.customer
-    # order, created = Order.objects.get_or_create(customer=customer, completed=False)
+            trn=payment_data['tran_id']
+            val_id = payment_data['val_id']
+            
+            request.session['payment_values_trn'] = trn
+            request.session['payment_values_val_id'] = val_id
+            
+            order.transaction_id = trn
+            order.completed = True
+            order.save()
+            orderid= order.id
 
-    
-    # order.transaction_id = transaction_id
-    
-    # order.completed = True
-    # order.save()
+            return render( request, 'store/payment_successful.html',{'trn':trn, 'valid':val_id, 'orderid':orderid})
+    return render(request, 'store/checkout.html')
 
-    # orderItem, created = OrderItem.objects.get_or_create(order=order)
-    # orderItem.delete()
-
-    return render( request, 'store/payment_successful.html')
-
-def recipt(request):
+def order_history(request):
     user = request.user
-    
-    data = cartData(request)
-    cartItems = data['cartItems']
-    order = data['order']
-    items = data['items']
+    orders = Order.objects.filter(customer__user=user, completed=True).order_by('-date_ordered')
+    context = {
+        'user': user,
+        'orders': orders
+        
+    }
+    return render(request, 'store/orders.html', context)
 
-    context = {'user':user, 'items': items, 'order': order, 'cartItems': cartItems}
+def recipt(request, pk):
+    order = Order.objects.get(id=pk)
+    user = order.customer.user
+    
+    items = OrderItem.objects.filter(order=order)
+    
+    trn = request.session.get('payment_values_trn', None)
+    val_id = request.session.get('payment_values_val_id', None)
+
+    context = {
+        'user': user,
+        'items': items,
+        'order': order,
+        'trn': trn,
+        'val_id': val_id,
+    }
 
     return render(request,'store/recipt.html',context)
+
+
+#Streaming Views
+def anime_list(request):
+    animes = Anime.objects.all()
+    return render(request, 'anime_list.html', {'animes': animes})
+
+@login_required(login_url='login')
+def anime_detail(request, pk):
+    anime = Anime.objects.get(id=pk)
+    
+    Anime.objects.filter(pk=anime.id).update(views=F('views') + 1)
+    genres = anime.genres.all()
+    episodes = Episode.objects.filter(anime=anime).order_by('number', 'name')
+    anime_rating = AnimeRating.objects.filter(anime=anime).aggregate(Avg('rating'))
+    try:
+        raters= AnimeRating.objects.filter(user=request.user)
+    except:
+        raters= None
+
+    if raters != None:
+        print('found rating of current user')
+    context = {
+        'anime': anime,
+        'genres': genres,
+        'episodes': episodes,
+        'rating': anime_rating,
+    }
+
+    if request.method=="POST":
+        # if request.user.id in 
+        comment= AnimeRating.objects.create(
+            user=request.user,
+            anime= anime,
+            rating=request.POST.get('rating'),
+
+        )
+        
+        return redirect('anime-detail', pk=anime.id)
+    else:
+        return render(request, 'streaming/anime_detail.html', context)
+
+@login_required(login_url='login')
+def episode_detail(request, pk):
+    
+    episode = Episode.objects.get(id=pk)
+    comments = Comment.objects.filter(episode=episode)
+
+    context = {
+        'episode': episode,
+        'comments': comments, 
+    }
+
+    if request.method=="POST":
+        comment= Comment.objects.create(
+            user=request.user,
+            episode=episode,
+            text=request.POST.get('body'),
+        )
+        
+        return redirect('episode-detail', pk=episode.id)
+
+    return render(request, 'streaming/episode_detail.html', context)
+
+@login_required(login_url='login')
+def delete_comment(request, pk):
+    comment=Comment.objects.get(id=pk)
+    episode = Episode.objects.get(id=comment.episode.id)
+
+    if request.user != comment.user:
+        return HttpResponse("You are not allowed here!!")
+            
+    if request.method=='POST':
+        comment.delete()
+        return redirect('episode-detail', pk=episode.id)
+    
+    return render(request, 'streaming/delete_comment.html')   
+
+def genre_list(request):
+    genres = Genre.objects.all()
+
+    for genre in genres:
+        genre.animes = Anime.objects.filter(genres=genre)
+
+    return render(request, 'base/genre.html', {'genres': genres})
+
+def favorite_anime(request):
+    user = request.user
+    favorite_animes = user.favorite_animes.all()
+    
+    anime_data = [
+        {'id': anime.id, 'name': anime.name, 'is_favorite': anime in favorite_animes}
+        for anime in Anime.objects.all()
+    ]
+    
+    return render(request, 'base/favorites.html', {'favorite_animes': favorite_animes})
+
+def remove_from_favorites(request, anime_id):
+    anime = get_object_or_404(Anime, id=anime_id)
+    request.user.favorite_animes.remove(anime)
+    return redirect('favorites')
+
+
+
+def toggle_favorite(request, anime_id):
+    anime = get_object_or_404(Anime, id=anime_id)
+    user = request.user
+
+    if anime in user.favorite_animes.all():
+        user.favorite_animes.remove(anime)
+        is_favorite = False
+    else:
+        user.favorite_animes.add(anime)
+        is_favorite = True
+
+    return JsonResponse({'is_favorite': is_favorite})

@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 <head>
-   <style>
+    <style>
       .centbox {
          max-width: 900px;
          margin: 0 auto;
@@ -14,7 +14,8 @@
          align-items: center;
          height: 100vh;
       }
-   </style>
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.js"></script>
 </head>
 <body>
     <div class="col-lg-6 centbox">
@@ -28,8 +29,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Username:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                        {{ user.username }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.username }}</span>
                     </div>
                 </div>
                 <hr>
@@ -37,8 +38,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Full Name:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                        {{ user.name }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.name }}</span>
                     </div>
                 </div>
                 <hr>
@@ -46,8 +47,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Email:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                        {{ user.email }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.email }}</span>
                     </div>
                 </div>
                 <hr>
@@ -55,8 +56,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Gender:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                    {{ user.gender }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.gender }}</span>
                     </div>
                 </div>
                 <hr>
@@ -64,8 +65,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Phone Number:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                    {{ user.phone }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.phone }}</span>
                     </div>
                 </div>
                 <hr>
@@ -73,8 +74,8 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Address:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                    {{ user.address }}
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ user.address }}</span>
                     </div>
                 </div>
                 <hr>
@@ -82,8 +83,26 @@
                     <div class="col-sm-3">
                         <h6 class="mb-0" style="color: black;">Order Time:</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary" style="color: black;">
-                        {% now "H:i d-m-Y " %}
+                    <div class="col-sm-9 text-secondary">
+                        <span id="order-time" style="color: black;"></span>
+                    </div>
+                </div>                                               
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Transaction ID:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ trn }}</span>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="mb-0" style="color: black;">Payment Validation ID:</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <span style="color: black;">{{ val_id }}</span>
                     </div>
                 </div>
                 <hr>
@@ -100,37 +119,41 @@
                     {% endfor %}
                     <h5>Items: {{ order.get_cart_items }}</h5>
                     <h5>Total: ${{ order.get_cart_total|floatformat:2 }}</h5>
-                    <button type="button" onclick="printPage()" style="text-align: center;">Print</button>
-                    </div>
+                    
+                </div>
             </div>
         </div>
     </div>
+    <div style="font-size: 1.5em; text-align: center; padding: 10px 15px;">
+        <button type="button" onclick="downloadPDF()">Download Recipt</button>
+    </div>
+    {% include 'footer.html' %}
 </body> 
 
 <script>
-    function printPage() {
-        // Apply print styles to fit the page
-        var printStyles = `
-            @media print {
-                body {
-                    width: 100%;
-                    height: 100%;
-                    margin: 0;
-                    padding: 0;
-                }
-                .box-element {
-                    max-width: 100%;
-                }
-                /* Add any additional styles as needed */
-            }
-        `;
+    function downloadPDF() {
+        var dlpdf = document.querySelector('.centbox');
 
-        var style = document.createElement('style');
-        style.type = 'text/css';
-        style.appendChild(document.createTextNode(printStyles));
-        document.head.appendChild(style);
+        var username = "{{ user.username }}"; 
+        var trn = "{{ trn }}";
 
-        window.print();
+        var filename = `${username}-invoice-${trn}.pdf`;
+        html2pdf().from(dlpdf).save(filename);
     }
 </script>
+
+<script>
+    var currentTime = new Date();
+    var hours = currentTime.getHours() % 12 || 12;
+    var ampm = currentTime.getHours() >= 12 ? 'PM' : 'AM';
+    var formattedTime = hours.toString().padStart(2, '0') + ':' +
+                        currentTime.getMinutes().toString().padStart(2, '0') + 
+                        ' ' + ampm + ' | ' +
+                        currentTime.getDate() + '/' +
+                        (currentTime.getMonth() + 1) + '/' +
+                        currentTime.getFullYear();
+
+    document.getElementById('order-time').innerText = formattedTime;
+</script>
+
 {% endblock %}

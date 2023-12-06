@@ -69,7 +69,7 @@
 
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
+      <li class="nav-item active" style="margin-left:20px;">
         <a class="nav-link" href="{% url 'home' %}" style="color: white; font-size: 18px;">ONEFLIX <span class="sr-only">(current)</span></a>
       </li>
       
@@ -91,6 +91,14 @@
                     <a class="dropdown-item text-center" href="{% url 'user-profile' user.id %}" style="font-size: 18px; height: 100%;">
                         <i class="fas fa-sliders-h fa-fw"></i> Profile
                     </a>
+                </li>
+                <li style="height: 50px;">
+                    <a class="dropdown-item text-center" href="{% url 'orders' %}" style="font-size: 18px; height: 100%;">
+                        <i class="fas fa-sliders-h fa-fw"></i> My Orders </a>
+                </li>
+                <li style="height: 50px;">
+                    <a class="dropdown-item text-center" href="{% url 'updates' user.id %}" style="font-size: 18px; height: 100%;">
+                        <i class="fas fa-sliders-h fa-fw"></i> My Events </a>
                 </li>
                 <li style="height: 50px;">
                     <a class="dropdown-item text-center" href="{% url 'logoutuser' %}" style="font-size: 18px; height: 100%;">
